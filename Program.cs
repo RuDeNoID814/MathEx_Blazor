@@ -1,3 +1,6 @@
+using Microsoft.EntityFrameworkCore;
+using MathEx_Blazor.Data;
+
 using MathEx_Blazor.Components;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -5,7 +8,18 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddRazorComponents();
 
+builder.Services.AddDbContext<DataContext>((sp, ef) =>
+{
+    var connStr = sp.GetRequiredService<IConfiguration>().GetConnectionString("Sqlite");
+    ef.UseSqlite(connStr);
+});
+
 var app = builder.Build();
+
+await using (var scope = app.Services.CreateAsyncScope())
+{
+    await scope.ServiceProvider.GetRequiredService<DataContext>().Database.MigrateAsync();
+}
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
