@@ -108,6 +108,7 @@
         cards = Db.Cards.ToList();
         editId = 0;
         name = description = tags = "";
+        await JS.InvokeVoidAsync("closeModal", "exampleModal");
     }
 
     // борд карточек

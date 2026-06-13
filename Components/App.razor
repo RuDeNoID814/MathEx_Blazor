@@ -23,6 +23,12 @@
         if (window.MathJax) MathJax.typesetPromise(); 
         if (window.lucide) lucide.createIcons();
     };
+    window.closeModal = (id) => {
+        var el = document.getElementById(id);
+        if (!el) return;
+        var modal = bootstrap.Modal.getOrCreateInstance(el);
+        modal.hide();
+    };
 </script>
     <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" async></script>
     <script src="@Assets["lib/bootstrap/dist/js/bootstrap.bundle.min.js"]"></script>
