@@ -11,8 +11,8 @@
 @* форма модалки для добавления и закрытия *@
 
 <!-- Button trigger modal -->
-<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
-    Добавить вопрос
+<button type="button" class="btn btn-primary rounded-pill px-4" data-bs-toggle="modal" data-bs-target="#exampleModal">
+    <i data-lucide="plus-circle" class="btn-icon"></i>Добавить вопрос
 </button>
 
 <!-- Modal -->
@@ -46,17 +46,21 @@
 </div>
 
 @* Борд карточек *@
-@foreach (var card in cards)
-{
-    <div class="card border-primary mb-3">
-        <div class="card-header">@card.Name</div>
-        <div class="card-body text-primary">
-            <p class="card-text">@card.Description</p>
-            <small>@card.Tags</small>
-            <button class="btn btn-danger btn-sm" @onclick="() => DeleteCard(card.Id)">Удалить</button>
+<div class="cards-list">
+    @foreach (var card in cards)
+    {
+        <div class="card border-primary mb-3">
+            <div class="card-header">@card.Name</div>
+            <div class="card-body text-primary">
+                <p class="card-text">@card.Description</p>
+                <div class="d-flex justify-content-end align-items-center">
+                    <button class="btn btn-danger btn-sm rounded-pill" @onclick="() => DeleteCard(card.Id)">Удалить</button>
+                </div>
+            </div>
         </div>
-    </div>
-}
+    } 
+</div>
+
 
 @code
 {
