@@ -1,5 +1,24 @@
+@font-face {
+    font-family: "Stem";
+    font-weight: 400;
+    src: url('./fonts/Stem-Regular-TW.woff2')
+    format('woff2');
+}
+@font-face {
+    font-family: "Stem";
+    font-weight: 500;
+    src: url("./fonts/Stem-Medium-TW.woff2")
+    format('woff2');
+}
+@font-face {
+    font-family: "Stem";
+    font-weight: 700;
+    src: url("./fonts/Stem-Bold-TW.woff2")
+    format('woff2');
+}
+
 html, body {
-    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-family: "Stem", arial, sans-serif;
 }
 
 a, .btn-link {
@@ -57,4 +76,11 @@ h1:focus {
 
 .form-floating > .form-control-plaintext:focus::placeholder, .form-floating > .form-control:focus::placeholder {
     text-align: start;
+}
+
+.navbar-icon {
+    color: white;
+    width: 20px;
+    height: 20px;
+    margin-right: 6px;
 }
