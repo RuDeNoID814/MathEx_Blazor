@@ -42,6 +42,11 @@ a, .btn-link {
     margin-right: 4px;
 }
 
+.btn-add {
+    white-space: nowrap;
+    font-style: 0.9rem;
+}
+
 .content {
     padding-top: 1.1rem;
 }

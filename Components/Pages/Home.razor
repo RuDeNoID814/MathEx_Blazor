@@ -11,9 +11,14 @@
 @* форма модалки для добавления и закрытия *@
 
 <!-- Button trigger modal -->
-<button type="button" class="btn btn-primary rounded-pill px-4" data-bs-toggle="modal" data-bs-target="#exampleModal">
-    <i data-lucide="plus-circle" class="btn-icon"></i>Добавить вопрос
-</button>
+<div class="d-flex justify-content-between align-items-center my-3">
+    <input class="form-control" placeholder="Поиск по вопросам..." @bind="search" @bind:event="oninput"/>
+    <button type="button" class="btn btn-add btn-primary rounded-pill px-4 ms-3" data-bs-toggle="modal" data-bs-target="#exampleModal" 
+            @onclick="StartAdd">
+        <span><i data-lucide="plus-circle" class="btn-icon"></i>Добавить вопрос</span>
+    </button>
+</div>
+
 
 <!-- Modal -->
 <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -39,7 +44,7 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
-                <button type="button" class="btn btn-primary" @onclick="AddCard">Добавить вопрос</button>
+                <button type="button" class="btn btn-primary" @onclick="SaveCard">@(editId == 0 ? "Добавить" : "Сохранить")</button>
             </div>
         </div>
     </div>
@@ -47,14 +52,16 @@
 
 @* Борд карточек *@
 <div class="cards-list">
-    @foreach (var card in cards)
+    @foreach (var card in cards.Where(c => string.IsNullOrEmpty(search) || c.Name.Contains(search, StringComparison.OrdinalIgnoreCase)))
     {
         <div class="card border-primary mb-3">
             <div class="card-header">@card.Name</div>
             <div class="card-body text-primary">
                 <p class="card-text">@card.Description</p>
                 <div class="d-flex justify-content-end align-items-center">
-                    <button class="btn btn-danger btn-sm rounded-pill" @onclick="() => DeleteCard(card.Id)">Удалить</button>
+                    <button class="btn btn-warning btn-sm rounded-pill" data-bs-toggle="modal" data-bs-target="#exampleModal" 
+                            @onclick="() => Edit(card)">Редактировать</button>
+                    <button class="btn btn-danger btn-sm rounded-pill ms-2" @onclick="() => DeleteCard(card.Id)">Удалить</button>
                 </div>
             </div>
         </div>
@@ -68,15 +75,36 @@
     private string name = "";
     private string description = "";
     private string tags = "";
+    private string search = "";
+    private int editId = 0;
 
     
-    // Для модалки, добавление карточки
-    private async Task AddCard()
+    // Для модалки. Сохранение карточки. если == 0 то создает новую, иначе обновляет
+    // существующую
+    private async Task SaveCard()
     {
-        var card = new Card { Name = name, Description = description, Tags = tags };
-        Db.Cards.Add(card);
+        if (editId == 0)
+        {
+            Db.Cards.Add(new Card
+            {
+                Name = name,
+                Description = description,
+                Tags = tags,
+            });
+        }
+        else
+        {
+            var card = Db.Cards.Find(editId); 
+            if (card != null) 
+            { 
+                card.Name = name; 
+                card.Description = description; 
+                card.Tags = tags; 
+            } 
+        }
         await Db.SaveChangesAsync();
         cards = Db.Cards.ToList();
+        editId = 0;
         name = description = tags = "";
     }
 
@@ -99,6 +127,20 @@
             await Db.SaveChangesAsync();
             cards = Db.Cards.ToList();
         }
+    }
+    // для заполнения форм данных карточки при редактировании
+    private void Edit(Card card)
+    {
+        editId = card.Id;
+        name = card.Name;
+        description = card.Description;
+        tags = card.Tags;
+    }
+    // очищает форму для добавления новой карточки
+    private void StartAdd()
+    {
+        editId = 0;
+        name = description = tags = "";
     }
     
     // Чтобы постоянно не тыркать ctrl+shift+r для корректного отображения latex, попытался сделать
