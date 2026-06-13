@@ -83,6 +83,8 @@
     // существующую
     private async Task SaveCard()
     {
+        if (string.IsNullOrWhiteSpace(name)) return;
+        
         if (editId == 0)
         {
             Db.Cards.Add(new Card
