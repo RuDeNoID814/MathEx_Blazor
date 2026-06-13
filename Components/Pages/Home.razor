@@ -1,6 +1,8 @@
 ﻿@page "/"
 @using MathEx_Blazor.Data
 @inject DataContext Db
+@inject IJSRuntime JS
+@rendermode InteractiveServer
 
 <PageTitle>MathEx</PageTitle>
 
@@ -37,15 +39,68 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
-                <button type="button" class="btn btn-primary">Добавить вопрос</button>
+                <button type="button" class="btn btn-primary" @onclick="AddCard">Добавить вопрос</button>
             </div>
         </div>
     </div>
 </div>
 
+@* Борд карточек *@
+@foreach (var card in cards)
+{
+    <div class="card border-primary mb-3">
+        <div class="card-header">@card.Name</div>
+        <div class="card-body text-primary">
+            <p class="card-text">@card.Description</p>
+            <small>@card.Tags</small>
+            <button class="btn btn-danger btn-sm" @onclick="() => DeleteCard(card.Id)">Удалить</button>
+        </div>
+    </div>
+}
+
 @code
 {
+    // для форм переменные
     private string name = "";
     private string description = "";
     private string tags = "";
+
+    
+    // Для модалки, добавление карточки
+    private async Task AddCard()
+    {
+        var card = new Card { Name = name, Description = description, Tags = tags };
+        Db.Cards.Add(card);
+        await Db.SaveChangesAsync();
+        cards = Db.Cards.ToList();
+        name = description = tags = "";
+    }
+
+    // борд карточек
+    private List<Card> cards = new();
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+        cards = Db.Cards.OrderBy(c => c.Name).ToList();
+    }
+    
+    // для удаления карточки из борда
+    private async Task DeleteCard(int id)
+    {
+        var card = Db.Cards.Find(id);
+        if (card != null)
+        {
+            Db.Cards.Remove(card);
+            await Db.SaveChangesAsync();
+            cards = Db.Cards.ToList();
+        }
+    }
+    
+    // Чтобы постоянно не тыркать ctrl+shift+r для корректного отображения latex, попытался сделать
+    // какой-то синхронный рендер сразу же
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        await JS.InvokeVoidAsync("typesetMath");
+    }
 }
