@@ -1,7 +1,51 @@
 ﻿@page "/"
+@using MathEx_Blazor.Data
+@inject DataContext Db
 
-<PageTitle>Home</PageTitle>
+<PageTitle>MathEx</PageTitle>
 
-<h1>Hello, world!</h1>
+<h1>MathEx - сборник вопросов/ответов для экзамена по математическому анализу</h1>
 
-Welcome to your new app.
+@* форма модалки для добавления и закрытия *@
+
+<!-- Button trigger modal -->
+<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
+    Добавить вопрос
+</button>
+
+<!-- Modal -->
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="exampleModalLabel">Форма для заполнения вопроса</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="mb-3">
+                    <label for="exampleFormControlInput1" class="form-label">Вопрос</label>
+                    <input type="text" class="form-control" id="exampleFormControlInput1" placeholder="Поле для вопроса" @bind="name">
+                </div>
+                <div class="mb-3">
+                    <label for="exampleFormControlTextarea1" class="form-label">Ответ на вопрос</label>
+                    <textarea class="form-control" id="exampleFormControlTextarea1" rows="3" @bind="description"></textarea>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Теги</label>
+                    <input type="text" class="form-control" placeholder="" @bind="tags">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
+                <button type="button" class="btn btn-primary">Добавить вопрос</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code
+{
+    private string name = "";
+    private string description = "";
+    private string tags = "";
+}
